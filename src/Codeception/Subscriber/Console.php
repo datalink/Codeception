@@ -528,7 +528,11 @@ class Console implements EventSubscriberInterface
             && (getenv('TERM'))
             && (getenv('TERM') != 'unknown')
         ) {
-            $this->width = (int) (`command -v tput >> /dev/null 2>&1 && tput cols`) - 2;
+            if ($envWidth = getenv('CODECEPTION_CONSOLE_WIDTH')) {
+                $this->width = (int)$envWidth;
+            } else {
+                $this->width = (int) (`command -v tput >> /dev/null 2>&1 && tput cols`) - 2;
+            }
         } elseif ($this->isWin() && (php_sapi_name() === "cli")) {
             exec('mode con', $output);
             preg_match('/^ +.* +(\d+)$/', $output[4], $matches);
